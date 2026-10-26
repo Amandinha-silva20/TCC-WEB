@@ -9,7 +9,7 @@
     const [jogoCarregado, setJogoCarregado] = useState(false)
 
     function tocarSomDeclique(){
-      const audio = new Audio('/somDaCompra.mp3')
+      const audio = new Audio('/')
       audio.play().catch(()=>console.log('som de compra não encontrado'))
     }
 
@@ -18,13 +18,18 @@
       audio.play().catch(()=>console.log('som de compra não encontrado'))
     }
 
-    useEffect(()=>{
+      useEffect(()=>{
       const save = localStorage.getItem('meu_jogo_save')
       if(save){
         const dadosSalvos = JSON.parse(save);
-        setPontos(dadosSalvos.pontosSalvos);
-        setPoderDeClique(dadosSalvos.poderSalvo);
-        setRendaPassiva(dadosSalvos.rendaSalva);
+        setPontos(Number(dadosSalvos.pontosSalvos) || 0);
+        setPoderDeClique(Number(dadosSalvos.poderSalvo) || 1);
+        setRendaPassiva(Number(dadosSalvos.rendaSalva) || 0);
+
+        // Carrega os dados salvos do jogo no localStorage ao iniciar a página,
+        // garantindo que os valores sejam convertidos para número (evitando erros de NaN)
+        // e marca que o jogo terminou de carregar.
+
       }
       setJogoCarregado(true)
     },[])
@@ -85,8 +90,8 @@
         nome: "Super Mouse",
         custo: 500,
         descricao: "Gera +10 pontos de click",
-        poder: 10
-
+        poder: 10,
+        passivo: 0
       },
       {
         id: 4,
@@ -121,7 +126,7 @@
       {/* Posiciona o botão vermelho no canto superior esquerdo com hover suave */}
       <button
         onClick={reiniciarJogo}
-        className="absolute top-4 left-4 bg-[#DD9117] hover:bg-[#c57f12] text-white px-0.20 py-0.5 rounded text-xs font-bold transition" 
+        className="absolute top-4 left-4 bg-[#DD9117] hover:bg-[#c57f12] text-white px-0.20 py-0.5 rounded text-[9px] font-bold transition" 
       >
         Resetar Jogo
 
@@ -142,14 +147,13 @@
             
             <img
             
-              src={poderDeClique > 1 ? "/brotinho-sim.png" :"/semente-do-girassol-sem-fundo.png"}
-              alt="Semente ou Brotinho"
-              className={`w-full h-full object-contain transition-all duration-700 ease-in-out transform ${poderDeClique > 1 ? "scale-100 opacity-100" : "rotate-12 opacity-90"}`}
-
-            />
-
-            
-      </div>
+              src={rendaPassiva >= 55 ? "/girassol-sem-fundo-Figma.png" : poderDeClique >= 12 ? "/terceira-fase-do-brotinho-sem-fundo.png" : rendaPassiva > 0 ? "/segunda-fase-girassol-sem-fundo.png" : poderDeClique > 1 ? "/brotinho-sim.png" : "/semente-do-girassol-sem-fundo.png"}
+              alt="Evolução do Girassol"
+              className={`w-full h-full object-contain transition-all duration-700 ease-in-out transform ${poderDeClique > 1 || rendaPassiva > 0 ? "scale-100 opacity-100" : "rotate-12 opacity-90"}`}
+            />  
+              
+          
+          </div>
       
       </div>
       
